@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wi-Fi Endoscope Viewer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="stage-panel" aria-label="Wi-Fi endoscope camera preview">
+        <header class="topbar">
+          <button class="nav-button" id="refreshNetwork" title="Refresh network" aria-label="Refresh network">
+            <img src="./assets/back.svg" alt="" aria-hidden="true" />
+          </button>
+          <div class="brand">Endoscope</div>
+          <button class="nav-button" id="settingsButton" title="Settings" aria-label="Settings">
+            <img src="./assets/settings.svg" alt="" aria-hidden="true" />
+          </button>
+        </header>
+
+        <div class="video-zone">
+          <div class="video-shell round" id="videoShell">
+            <img id="streamImage" alt="Live camera" />
+            <iframe id="streamFrame" title="Device stream page"></iframe>
+            <div class="empty-state" id="emptyState">
+              <div class="lens-mark"><span></span></div>
+              <strong>Endoscope</strong>
+              <p id="emptyHint">Connect to the camera Wi-Fi, then scan from settings.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-status" aria-live="polite">
+          <span id="streamStatus">Inactive</span>
+          <span id="rotationStatus">Auto 0.0 deg</span>
+        </div>
+
+        <div class="timer" id="recordTimer">00:00:00</div>
+
+        <nav class="control-dock" aria-label="Camera controls">
+          <button class="control-item" id="rotateButton" title="Rotate image" aria-label="Rotate image">
+            <img src="./assets/rotate.svg" alt="" aria-hidden="true" />
+            <span>Rotate</span>
+          </button>
+          <button class="control-item" id="mirrorButton" title="Mirror" aria-label="Mirror">
+            <img src="./assets/mirror.svg" alt="" aria-hidden="true" />
+            <span>Mirror</span>
+          </button>
+          <button class="control-item" id="snapshotButton" title="Save photo" aria-label="Save photo">
+            <img src="./assets/photo.svg" alt="" aria-hidden="true" />
+            <span>Photo</span>
+          </button>
+          <button class="control-item" id="recordButton" title="Start recording" aria-label="Start recording">
+            <img src="./assets/video.svg" alt="" aria-hidden="true" />
+            <span>Video</span>
+          </button>
+          <button class="control-item" id="toggleShape" title="Change preview shape" aria-label="Change preview shape">
+            <img src="./assets/mode-round.svg" alt="" aria-hidden="true" />
+            <span>Mode</span>
+          </button>
+        </nav>
+      </section>
+
+      <aside class="side-panel" id="settingsDrawer" aria-label="Endoscope settings">
+        <header class="drawer-head">
+          <div>
+            <strong>Endoscope Settings</strong>
+            <span>Scan, connection, and stabilizer</span>
+          </div>
+          <button class="drawer-close" id="closeSettings" title="Close" aria-label="Close">x</button>
+        </header>
+
+        <section class="status-grid" aria-label="Connection status">
+          <article>
+            <span>Wi-Fi</span>
+            <strong id="wifiStatus">Loading</strong>
+          </article>
+          <article>
+            <span>Laptop IP</span>
+            <strong id="ipStatus">-</strong>
+          </article>
+          <article>
+            <span>Gateway</span>
+            <strong id="gatewayStatus">-</strong>
+          </article>
+          <article>
+            <span>Sensor</span>
+            <strong id="sensorStatus">Waiting</strong>
+          </article>
+        </section>
+
+        <section class="connect-card">
+          <label for="ssidInput">Camera SSID</label>
+          <div class="input-row">
+            <input id="ssidInput" value="HNDEC_55-XXXXXX" spellcheck="false" />
+            <button id="connectButton">Connect</button>
+          </div>
+          <button class="wide-action" id="scanButton">Scan camera</button>
+        </section>
+
+        <section class="connect-card">
+          <div class="section-title compact">
+            <span>0-360 rotation</span>
+            <strong id="offsetStatus">Offset 0.0</strong>
+          </div>
+          <div class="button-row">
+            <button id="calibrateButton">Calibrate upright</button>
+            <button id="invertRotateButton">Reverse direction</button>
+          </div>
+          <button class="wide-action secondary" id="autoRotateButton">Auto rotation on</button>
+          <label class="field-label" for="sensorAxis">Sensor axis mode</label>
+          <select id="sensorAxis">
+            <option value="auto">Auto heading</option>
+            <option value="xyz">XYZ calibration</option>
+            <option value="xy">XY</option>
+            <option value="xz">XZ</option>
+            <option value="yz">YZ</option>
+          </select>
+          <label class="range-label" for="smoothingRange">
+            <span>Gyro stabilizer</span>
+            <strong id="smoothingValue">110 ms</strong>
+          </label>
+          <input id="smoothingRange" type="range" min="40" max="220" step="10" value="70" />
+          <button class="wide-action secondary" id="gyroDebugButton">Debug gyro</button>
+          <pre class="gyro-debug" id="gyroDebug">No gyro data yet.</pre>
+        </section>
+
+        <section class="connect-card">
+          <label for="manualUrl">Manual stream URL</label>
+          <div class="input-row stackable">
+            <input id="manualUrl" placeholder="http://192.168.1.1:8080/?action=stream" spellcheck="false" />
+            <button id="manualPlay">Play</button>
+          </div>
+        </section>
+
+        <section class="results-panel">
+          <div class="section-title">
+            <span>Endpoint</span>
+            <button class="text-button" id="clearResults">Clear</button>
+          </div>
+          <div id="resultsList" class="results-list"></div>
+        </section>
+
+        <section class="log-panel">
+          <div class="section-title">
+            <span>Log</span>
+          </div>
+          <div id="logList" class="log-list"></div>
+        </section>
+      </aside>
+      <div class="drawer-scrim" id="drawerScrim"></div>
+    </main>
+
+    <canvas id="captureCanvas"></canvas>
+    <script src="./app.js"></script>
+  </body>
+</html>
