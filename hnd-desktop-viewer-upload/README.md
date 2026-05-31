@@ -63,7 +63,7 @@ PORT="48000" bash start.bash
 
 ## Privacy
 
-The server only listens on `127.0.0.1`, so it is accessible from the local laptop only. The private IPs used by the camera, such as `192.168.1.1`, are local network addresses and are not public internet addresses.
+The server only listens on `127.0.0.1`, so it is accessible from the local laptop only. The private IPs used by the camera, such as `1xx.xxx.1.1`, are local network addresses and are not public internet addresses.
 
 ## Repository Safety
 
